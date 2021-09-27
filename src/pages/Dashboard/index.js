@@ -1,18 +1,16 @@
-import { useContext, useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import './dashboard.css';
-import { AuthContext } from '../../contexts/auth';
 import Header from '../../components/Header';
 import Title from '../../components/Title';
 import Modal from '../../components/Modal';
 import { FiEdit2, FiMessageSquare, FiPlus, FiSearch } from 'react-icons/fi';
 import { Link } from 'react-router-dom';
 import firebase from '../../services/firebaseConnection';
-import { format, isFuture } from 'date-fns';
+import { format } from 'date-fns';
 
 const listRef = firebase.firestore().collection('tickets').orderBy('created', 'desc')
 
 const Dashboard = () => {
-    const { } = useContext(AuthContext)
 
     const [chamados, setChamados] = useState([]);
     const [loading, setLoading] = useState(true);

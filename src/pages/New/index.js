@@ -48,7 +48,7 @@ const New = () => {
                     setCustomers(lista);
                     setLoadCustomers(false);
 
-                    if(id) {
+                    if (id) {
                         loadId(lista);
                     }
                 })
@@ -58,55 +58,58 @@ const New = () => {
                     setCustomers([{ id: '1', nameFantasia: '' }]);
                 })
         }
+
+        const loadId = async (lista) => {
+            await firebase.firestore().collection('tickets').doc(id)
+                .get()
+                .then((snapshot) => {
+                    setAssunto(snapshot.data().assunto);
+                    setStatus(snapshot.data().status);
+                    setComplemento(snapshot.data().complemento);
+
+                    let index = lista.findIndex(item => item.id === snapshot.data().clienteId)
+                    setCustomerSelected(index);
+                    setIdCustomer(true)
+                })
+                .catch((error) => {
+                    console.log('ERRO NO ID PASSADO: ', error)
+                    setIdCustomer(false)
+                })
+        }
+
         loadCustomers();
     }, [id])
 
-    const loadId = async (lista) => {
-        await firebase.firestore().collection('tickets').doc(id)
-        .get()
-        .then((snapshot) => {
-            setAssunto(snapshot.data().assunto);
-            setStatus(snapshot.data().status);
-            setComplemento(snapshot.data().complemento);
 
-            let index = lista.findIndex(item => item.id === snapshot.data().clienteId)
-            setCustomerSelected(index);
-            setIdCustomer(true)
-        })
-        .catch((error) => {
-            console.log('ERRO NO ID PASSADO: ', error)
-            setIdCustomer(false)
-        })
-    }
 
     const handleRegister = async (e) => {
         e.preventDefault();
 
-        if(idCustomer) {
+        if (idCustomer) {
             await firebase.firestore().collection('tickets')
-            .doc(id)
-            .update({
-                cliente: customers[customerSelected].nameFantasia,
-                clienteId: customers[customerSelected].id,
-                assunto: assunto,
-                status: status,
-                complemento: complemento,
-                userId: user.uid
-            })
-            .then(() => {
-                toast.success('Chamado editado!')
-                setCustomerSelected(0);
-                setComplemento('');
-                history.push('/dashboard')
-            })
-            .catch((error) => {
-                toast.error('Erro ao editar.')
-                console.log(error)
-            })
+                .doc(id)
+                .update({
+                    cliente: customers[customerSelected].nameFantasia,
+                    clienteId: customers[customerSelected].id,
+                    assunto: assunto,
+                    status: status,
+                    complemento: complemento,
+                    userId: user.uid
+                })
+                .then(() => {
+                    toast.success('Chamado editado!')
+                    setCustomerSelected(0);
+                    setComplemento('');
+                    history.push('/dashboard')
+                })
+                .catch((error) => {
+                    toast.error('Erro ao editar.')
+                    console.log(error)
+                })
 
             return;
         }
-        
+
         await firebase.firestore().collection('tickets')
             .add({
                 created: new Date(),
